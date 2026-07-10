@@ -1,0 +1,44 @@
+services:
+  pg-primary:
+    image: pgbackrest-lab-base
+    container_name: pg-primary-replic
+    environment:
+      - NODE_TYPE=primary
+    volumes:
+      - ./pg-primary.conf:/etc/pgbackrest/pgbackrest.conf:ro
+      - pg-primary-replic-data:/var/lib/postgresql/16/main
+    networks:
+      - lab3-net
+
+  pg-standby:
+    image: pgbackrest-lab-base
+    container_name: pg-standby-replic
+    environment:
+      - NODE_TYPE=standby
+    volumes:
+      - ./pg-standby.conf:/etc/pgbackrest/pgbackrest.conf:ro
+      - pg-standby-replic-data:/var/lib/postgresql/16/main
+    networks:
+      - lab3-net
+    depends_on:
+      - pg-primary
+
+  pgbackrest-repo:
+    image: pgbackrest-lab-base
+    container_name: pgbackrest-repo-replic
+    environment:
+      - NODE_TYPE=repo
+    volumes:
+      - ./pgbackrest-repo.conf:/etc/pgbackrest/pgbackrest.conf:ro
+      - pgbackrest-repo-replic-data:/var/lib/pgbackrest
+    networks:
+      - lab3-net
+
+volumes:
+  pg-primary-replic-data:
+  pg-standby-replic-data:
+  pgbackrest-repo-replic-data:
+
+networks:
+  lab3-net:
+    name: lab3-net

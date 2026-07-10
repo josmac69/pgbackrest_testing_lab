@@ -1,0 +1,30 @@
+services:
+  pg-primary:
+    image: pgbackrest-lab-base
+    container_name: pg-primary
+    environment:
+      - NODE_TYPE=primary
+    volumes:
+      - ./pg-primary.conf:/etc/pgbackrest/pgbackrest.conf:ro
+      - pg-primary-data:/var/lib/postgresql/16/main
+    networks:
+      - lab1-net
+
+  pgbackrest-repo:
+    image: pgbackrest-lab-base
+    container_name: pgbackrest-repo
+    environment:
+      - NODE_TYPE=repo
+    volumes:
+      - ./pgbackrest-repo.conf:/etc/pgbackrest/pgbackrest.conf:ro
+      - pgbackrest-repo-data:/var/lib/pgbackrest
+    networks:
+      - lab1-net
+
+volumes:
+  pg-primary-data:
+  pgbackrest-repo-data:
+
+networks:
+  lab1-net:
+    name: lab1-net
